@@ -1,11 +1,10 @@
-from flask import Flask, render_template, request, send_file
 import os
+from flask import Flask, render_template, request, send_file
 import re
 import pandas as pd
 from docx import Document
 import PyPDF2
 from werkzeug.utils import secure_filename
-
 
 app = Flask(__name__)
 
@@ -34,7 +33,6 @@ def extract_phone_number(text):
     phone_regex = r'(\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|\d{3}[-\.\s]??\d{4})'
     phone_numbers = re.findall(phone_regex, text)
     return phone_numbers[0] if phone_numbers else None
-
 
 @app.route('/')
 def index():
@@ -73,10 +71,12 @@ def upload():
         all_data.append({'Email': email, 'Phone': phone, 'Text': text})
     
     df = pd.DataFrame(all_data)
-    output_file = 'output.xlsx'
+    # Use absolute file path for saving Excel file
+    output_file = os.path.join(app.config['UPLOAD_FOLDER'], 'output.xlsx')
     df.to_excel(output_file, index=False)
 
     return send_file(output_file, as_attachment=True)
 
 if __name__=='__main__':
     app.run(debug=True)
+
