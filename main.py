@@ -4,6 +4,8 @@ import re
 import pandas as pd
 from docx import Document
 import PyPDF2
+from werkzeug.utils import secure_filename
+
 
 app = Flask(__name__)
 
@@ -37,9 +39,6 @@ def extract_phone_number(text):
 @app.route('/')
 def index():
     return render_template('index.html')
-
-import os
-from werkzeug.utils import secure_filename
 
 # Add a configuration for the upload folder
 UPLOAD_FOLDER = 'uploads'
@@ -81,34 +80,3 @@ def upload():
 
 if __name__=='__main__':
     app.run(debug=True)
-
-
-"""
-
-def process_cv_folder(folder_path):
-    data = []
-    for file_name in os.listdir(folder_path):
-        if file_name.endswith('.pdf'):
-            text = extract_text_from_pdf(os.path.join(folder_path, file_name))
-        elif file_name.endswith('.docx'):
-            text = extract_text_from_docx(os.path.join(folder_path, file_name))
-        else:
-            continue
-
-        email = extract_email(text)
-        phone = extract_phone_number(text)
-        data.append({'File': file_name, 'Email': email, 'Phone': phone, 'Text': text})
-    return data
-
-def export_to_excel(data, output_path):
-    df = pd.DataFrame(data)
-    df.to_excel(output_path, index=False)
-
-if __name__ == "__main__":
-    folder_path = 'C:/Users/Admin/Projects/cv_parser/Sample2'
-    output_path = '/cv_parser/output.xlsx'
-
-    extracted_data = process_cv_folder(folder_path)
-    export_to_excel(extracted_data, output_path)
-    print("Extraction complete. Data saved to", output_path)
-"""
